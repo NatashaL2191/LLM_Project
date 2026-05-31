@@ -4,41 +4,58 @@ from openai import OpenAI
 from pathlib import Path
 
 load_dotenv()
+class LLM_CLient:
 
-client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key = os.getenv("OPENROUTER_API_KEY")
-)
+  client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key = os.getenv("OPENROUTER_API_KEY")
+  )
 
-# First API call with reasoning
-response = client.chat.completions.create(
-  model="nvidia/nemotron-3-super-120b-a12b:free",
-  messages=[
-          {
-            "role": "user",
-            "content": "How many r's are in the word 'strawberry'?"
-          }
-        ],
-  extra_body={"reasoning": {"enabled": True}}
-)
+  # First API call with reasoning
+  response = client.chat.completions.create(
+    model="nvidia/nemotron-3-super-120b-a12b:free",
+    messages=[
+            {
+              "role": "user",
+              "content": "How many r's are in the word 'strawberry'?"
+            }
+          ],
+    extra_body={"reasoning": {"enabled": True}}
+  )
 
 # Extract the assistant message with reasoning_details
-response = response.choices[0].message
+  response = response.choices[0].message
 
 # Preserve the assistant message with reasoning_details
-messages = [
-  {"role": "user", "content": "How many r's are in the word 'strawberry'?"},
-  {
-    "role": "assistant",
-    "content": response.content,
-    "reasoning_details": response.reasoning_details  # Pass back unmodified
-  },
-  {"role": "user", "content": "Are you sure? Think carefully."}
-]
+  messages = [
+    {"role": "user", "content": "How many r's are in the word 'strawberry'?"},
+    {
+      "role": "assistant",
+      "content": response.content,
+      "reasoning_details": response.reasoning_details  # Pass back unmodified
+    },
+    {"role": "user", "content": "Are you sure? Think carefully."}
+  ]
 
-# Second API call - model continues reasoning from where it left off
-response2 = client.chat.completions.create(
-  model="nvidia/nemotron-3-super-120b-a12b:free",
-  messages=messages,
-  extra_body={"reasoning": {"enabled": True}}
-)
+  # Second API call - model continues reasoning from where it left off
+  response2 = client.chat.completions.create(
+    model="nvidia/nemotron-3-super-120b-a12b:free",
+    messages=messages,
+    extra_body={"reasoning": {"enabled": True}}
+  )
+
+def main():
+    print("="*60)
+    print("OPS ASSISTANT")
+    print("="*60)
+    print("Examples: 'where is alice?', 'list zones', 'quit'\n")
+    
+    assistant = OpsAssistant()
+    
+
+    assistant.close()
+    print("Goodbye!")
+
+
+if __name__ == '__main__':
+    main()
