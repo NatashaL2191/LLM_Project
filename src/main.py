@@ -2,26 +2,47 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from pathlib import Path
+import click
 
 load_dotenv()
-class LLM_CLient:
 
-  client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key = os.getenv("OPENROUTER_API_KEY")
-  )
+class Resume:
+  def __init__(self, file, name):
+    self.name = name
+    self.file = file
+    pass
 
-  # First API call with reasoning
-  response = client.chat.completions.create(
-    model="nvidia/nemotron-3-super-120b-a12b:free",
-    messages=[
-            {
-              "role": "user",
-              "content": "How many r's are in the word 'strawberry'?"
-            }
-          ],
-    extra_body={"reasoning": {"enabled": True}}
-  )
+
+
+
+class LLM_CLient(Resume):
+  '''Class defining the LLM CLient capabilities'''
+  def __init__(self,file):
+    self.file = file
+    self.client = OpenAI(
+      base_url="https://openrouter.ai/api/v1",
+      api_key = os.getenv("OPENROUTER_API_KEY")
+    )
+  def edit_resume():
+    '''Create function to open and write new section into Resume'''
+    with open(file) as f:
+      print(f.read())
+    with open(file, "w") as f:
+      f.write(input)
+  def add_to_section():
+    pass
+
+    # First API call with reasoning
+    response = client.chat.completions.create(
+      model="nvidia/nemotron-3-super-120b-a12b:free",
+      messages=[
+              {
+                "role": "user",
+                "content": "How many r's are in the word 'strawberry'?"
+              }
+            ],
+      extra_body={"reasoning": {"enabled": True}}
+    )
 
 # Extract the assistant message with reasoning_details
   response = response.choices[0].message
@@ -44,18 +65,11 @@ class LLM_CLient:
     extra_body={"reasoning": {"enabled": True}}
   )
 
+
+@click.command()
+@click.option("--name", Prompt="Enter your preferred name")
 def main():
-    print("="*60)
-    print("OPS ASSISTANT")
-    print("="*60)
-    print("Examples: 'where is alice?', 'list zones', 'quit'\n")
+   click.echo('Hello! What would you like to do?')
     
-    assistant = OpsAssistant()
-    
-
-    assistant.close()
-    print("Goodbye!")
-
-
 if __name__ == '__main__':
     main()
