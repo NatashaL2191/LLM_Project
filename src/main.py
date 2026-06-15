@@ -35,7 +35,7 @@ class LLM_CLient(Resume):
   def add_to_section(section, description):
     pass
 
-  
+
   def step(self, user_input: str) -> str:
       """Runs a single reasoning and execution cycle."""
       self.memory.append({"role": "user", "content": user_input}) 
@@ -65,7 +65,8 @@ class LLM_CLient(Resume):
       ]
 
       # Second API call - model continues reasoning from where it left off
-      response2 = client.chat.completions.create(
+      
+      response2 = self.client.chat.completions.create(
         model="nvidia/nemotron-3-super-120b-a12b:free",
         messages=messages,
         extra_body={"reasoning": {"enabled": True}}
@@ -74,9 +75,9 @@ class LLM_CLient(Resume):
 
 
 
-
+@LLM_CLient
 @click.command()
-@click.option("--name", Prompt="Enter your preferred name")
+@click.argument('prompt', type=str)
 def main():
    click.echo('Hello! What would you like to do?')
     
